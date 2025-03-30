@@ -52,8 +52,8 @@ class RoverController extends Controller
                 'commands_send' => $request->input('commands'),
                 'commands_executed' => implode('', $this->roverService->getExecutedCommands()),
                 'from' => [
-                    'x' => $request->input('start_x'),
-                    'y' => $request->input('start_y'),
+                    'x' => (int)$request->input('start_x'),
+                    'y' => (int)$request->input('start_y'),
                     'direction' => $request->input('direction'),
                 ],
                 'to' => [
