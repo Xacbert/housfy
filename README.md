@@ -1,4 +1,6 @@
 
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20.svg?style=flat-square)
+
 # Mars Rover Mission
 
 Software that translates the commands sent from earth to instructions that are understood by the rover.
@@ -115,7 +117,7 @@ You can interact with the rover's movement system by sending a `POST` request to
 - `direction`: The rover's starting direction (in this example, `"E"` for East).
 3. **Response**: Shows an example JSON response with:
 - `commands_send`: The commands that were sent to the rover.
-- `commands_executed`: The commands that the rover executed before encountering an obstacle.
+- `commands_executed`: The commands that the rover executed before encountering an obstacle (if no obstacle found, send and executed are equals).
 - `from`: The rover's starting position and direction.
 - `to`: The final position and direction of the rover after executing the commands.
 - `obstacle`: The coordinates where an obstacle was encountered that stopped the rover.
