@@ -121,7 +121,21 @@ You can interact with the rover's movement system by sending a `POST` request to
 - `from`: The rover's starting position and direction.
 - `to`: The final position and direction of the rover after executing the commands.
 - `obstacle`: The coordinates where an obstacle was encountered that stopped the rover.
-   
+
+## Pre-requisites
+
+Before setting up the project, make sure you have the following installed:
+
+- **PHP 8.2** or higher
+- **Composer** (dependency manager for PHP)
+- **Laravel Installer** (optional, but recommended for managing Laravel projects)
+
+You can verify the installed PHP version with the following command:
+
+```bash
+php -v
+```
+
 ## Installation
 
 Follow these steps to set up the project locally:
