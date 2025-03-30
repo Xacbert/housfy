@@ -1,66 +1,169 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Mars Rover Mission
 
-## About Laravel
+Software that translates the commands sent from earth to instructions that are understood by the rover.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+# Requirements
+- Given the initial starting point (x,y) of a rover and the direction (N,S,E,W) it is facing.
+- The rover receives a collection of commands. (E.g.) FFRRFFFRL
+- The rover can move forward (f).
+- The rover can move left/right (l,r).
+- Planet is square.
+- Obstacle detection before each move to a new square. If a given sequence of commands encounters an obstacle, the rover moves up to the last possible point, aborts the sequence and reports the obstacle
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# How It Works
+The application operates as follows:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. __Input__: The user provides a series of commands ( movement instructions and direction for a rover).
 
-## Learning Laravel
+2. __Execution__: The system processes each command:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. __Movement Commands (F)__: The rover moves in the direction it is facing until stopped by an obstacle.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+4. __Turning Commands (L and R)__: The rover changes its orientation by 90 degrees to the left or right, and move forward.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5. __Obstacle Detection__: If the rover encounters an obstacle, it stops and does not move further.
 
-## Laravel Sponsors
+6. __Boundary Handling__: If the rover reaches the edge of the map, it "wraps around" to the opposite side (cyclic map behavior).
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+7. __Final Output__: After processing all commands, the system returns the commands send and executed, the original positicion and direction, the final position and direction, and the obstacle coordenates.
 
-### Premium Partners
+## Environment Variables
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+This project uses the following environment variables. You can set them in your `.env` file:
 
-## Contributing
+1. **MAP_WIDTH**  
+   - Description: The width of the map (horizontal size in units).  
+   - Default: `200`  
+   - Example:
+     ```plaintext
+     MAP_WIDTH=200
+     ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. **MAP_HEIGHT**  
+   - Description: The height of the map (vertical size in units).  
+   - Default: `200`  
+   - Example:
+     ```plaintext
+     MAP_HEIGHT=100
+     ```
 
-## Code of Conduct
+3. **ROVER_OBSTACLES**  
+   - Description: A comma-separated list of obstacle coordinates (x,y) that the rover cannot move through.  
+   - Default: `[]`  
+   - Example:
+     ```plaintext
+     ROVER_OBSTACLES="[[2, 0], [3, 0], [5, 5]]"
+     ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Additional Notes:
+- Ensure you set the correct values for the map's dimensions and the obstacle positions to match your application's logic.
+- The `ROVER_OBSTACLES` variable should be provided as a string representation of an array of coordinates.
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Usage/Examples
 
-## License
+You can interact with the rover's movement system by sending a `POST` request to the `/api/rover/move` endpoint. Below are examples of how to use this API.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Request
+
+- **Endpoint**: `/api/rover/move`
+- **Method**: `POST`
+- **Content-Type**: `application/json`
+
+### Example of a request Body
+
+```json
+{
+  "commands": "FFFFRRFFLFFR",
+  "start_x": 199,
+  "start_y": 1,
+  "direction": "E"
+}
+```
+
+### Example of a successful Response (with obstacle found):
+
+```json
+{
+    "commands_send": "FFFFRRFFLFFR",
+    "commands_executed": "FFFF",
+    "from": {
+        "x": 199,
+        "y": 1,
+        "direction": "E"
+    },
+    "to": {
+        "x": 3,
+        "y": 1,
+        "direction": "E"
+    },
+    "obstacle": [
+        3,
+        0
+    ]
+}
+```
+
+
+### Samples explanation:
+
+1. **Request**: Specifies the method (`POST`) and endpoint (`/api/rover/move`), as well as the content type (`application/json`).
+2. **Request Body**: Includes the body of the request in JSON format with the parameters:
+- `commands`: The series of commands to move the rover.
+- `start_x`, `start_y`: The rover's starting position.
+- `direction`: The rover's starting direction (in this example, `"E"` for East).
+3. **Response**: Shows an example JSON response with:
+- `commands_send`: The commands that were sent to the rover.
+- `commands_executed`: The commands that the rover executed before encountering an obstacle.
+- `from`: The rover's starting position and direction.
+- `to`: The final position and direction of the rover after executing the commands.
+- `obstacle`: The coordinates where an obstacle was encountered that stopped the rover.
+   
+## Installation
+
+Follow these steps to set up the project locally:
+
+### 1. Clone the Repository
+
+First, clone the repository to your local machine:
+
+```bash
+git clone https://github.com/Xacbert/housfy.git
+cd housfy
+```
+
+### 2. Install Dependencies
+
+Run the following command to install the required dependencies via Composer:
+
+```bash
+composer install
+```
+
+### 3. Set Up the .env File
+Copy the .env.example file to .env to configure your environment settings:
+
+```bash
+cp .env.example .env
+```
+
+You may need to adjust the settings in your .env file (e.g., map size and obstacles).
+
+### 4. Generate the Application Key
+
+The Laravel application requires an application key. Generate it by running the following command:
+
+```bash
+php artisan key:generate
+```
+
+This will set the APP_KEY in your .env file, which is required for encryption and other services.
+
+### 5. Run the Application Locally
+
+To run the application locally, use the built-in Laravel development server by running:
+
+```bash
+php artisan serve
+```
