@@ -14,10 +14,10 @@ class RoverService
     private string $direction;
 
     /** @var int $mapWidth */
-    private int $mapWidth = 200;
+    private int $mapWidth;
 
     /** @var int $mapHeight */
-    private int $mapHeight = 100;
+    private int $mapHeight;
 
     /** @var array $obstacles */
     protected $obstacles = []; 
@@ -43,6 +43,9 @@ class RoverService
         $this->y = $y;
         $this->direction = $direction;
         $this->obstacles = json_decode(env('ROVER_OBSTACLES', '[]'), true); 
+
+        $this->mapWidth = env('MAP_WIDTH', 200);
+        $this->mapHeight = env('MAP_HEIGHT', 200);
     }
 
     /**
