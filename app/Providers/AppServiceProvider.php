@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
+use App\Services\RoverService;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +12,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(RoverService::class, function ($app) {
+            return new RoverService();
+        });
     }
 
     /**
